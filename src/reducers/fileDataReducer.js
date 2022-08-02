@@ -4,7 +4,7 @@ const GET_CHANNEL = "GET_CHANNEL"
 const DROP_CHART_DATA = "DROP_CHART_DATA"
 
 const defaultState={
-    channelsNumber:3,
+    channelsNumber:5,
     agregationsMultipliers:[100, 125, 200, 250, 400, 500, 1000],
     //agregationsMultipliers:[400, 500, 1000],
     dataLoaded: false,
