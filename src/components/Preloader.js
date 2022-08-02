@@ -2,7 +2,7 @@ import React from 'react';
 import { BallTriangle } from  'react-loader-spinner'
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
-const Chart = () => {
+const Preloader = () => {
 
 
 
@@ -14,4 +14,4 @@ const Chart = () => {
     );
 };
 
-export default Chart;
+export default Preloader;

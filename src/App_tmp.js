@@ -8,7 +8,7 @@ import Chart from './components/Chart'
 import {useDispatch, useSelector} from "react-redux";
 
 import {fetchChannel} from "./asyncActions/loadChannel";
-import Preloader from "./components/Preloader";
+import Preloader from "./components/Preloader"
 import {dropChartData} from "./reducers/fileDataReducer";
 
 
@@ -40,9 +40,8 @@ function App() {
 
         if(!loadingChannel){
             setLoadingChannel(true)
-            console.log("offset = "+offset)
 
-
+            console.log("o_O-->showPreloader = "+showPreloader)
 
             loadAllChannels(agregationsMultipliers[aggregation], channelsNumber, offset, showPoints/agregationsMultipliers[aggregation])
         }

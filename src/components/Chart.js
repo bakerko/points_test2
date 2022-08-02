@@ -113,7 +113,7 @@ const Chart = ({
 
     useEffect(() => {
 
-        if(dataForCharts.length<=2)return;
+        if(dataForCharts.length<=1)return;
 
 
         //console.log('o_O chart refresh')
