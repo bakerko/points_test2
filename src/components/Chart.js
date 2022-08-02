@@ -113,7 +113,10 @@ const Chart = ({
 
     useEffect(() => {
 
-        console.log('o_O chart refresh')
+        if(dataForCharts.length<=2)return;
+
+
+        //console.log('o_O chart refresh')
 
         let datasets=[];
 
@@ -131,8 +134,8 @@ const Chart = ({
         if(dataForCharts.length>0)
             dataForCharts.map((item, index)=> {
 
-                console.log("shift y  = ")
-                console.log(yShift*2)
+                //console.log("shift y  = ")
+                //console.log(yShift*2)
 
 
                 tmp_indexes=[]

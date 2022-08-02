@@ -29,6 +29,12 @@ function App() {
 
     const [aggregation, setAggregation] = useState(0);
 
+    const [mouseDown, setMouseDown] = useState(0);
+    const [mouseMoveStartX, setmouseMoveStartX] = useState(0);
+
+    const minimumShift=5; //percents
+    const chartWidth=1600;
+
 
     useEffect(() => {
 
@@ -65,9 +71,21 @@ function App() {
             setShowPreloader(true)
         }
 
-        console.log("aggregation = "+aggregation)
+        //console.log("aggregation = "+aggregation)
 
     }, [aggregation])
+
+
+    useEffect(() => {
+        if(loadingChannel) {
+            dispatch(dropChartData([]))
+            setLoadingChannel(false)
+            setShowPreloader(true)
+        }
+
+        console.log("o_O --> offset = "+offset)
+
+    }, [offset])
 
 
     const changeScaleDown = () => {
@@ -90,10 +108,83 @@ function App() {
 
     }
 
+    const myMouseUp=()=>{
+        setMouseDown(0)
+
+    }
+
+    const myMouseDown=(e)=>{
+        setMouseDown(1)
+        setmouseMoveStartX(e.pageX)
+
+    }
+
+    const mouseMove=(e)=>{
+        let tmp = e.pageX;
+
+        //console.log("mouseDown = "+mouseDown)
+
+        if(mouseDown){
+            let curX = e.pageX;
+            let delta = curX-mouseMoveStartX;
+            let tmp = delta
+
+            let shiftByChartWidth = delta/chartWidth;
+
+            let tmpPercentShift = shiftByChartWidth*100;
+            let shiftCount = Math.ceil(Math.abs(showPoints/agregationsMultipliers[aggregation]*shiftByChartWidth))
+
+            shiftCount=4;
+
+            if(Math.abs(shiftByChartWidth*100)>=minimumShift)
+                console.log("make shift = "+shiftCount)
+
+                if(delta>0){
+                    setmouseMoveStartX(curX)
+                    shiftLeftMore(shiftCount)
+                }else{
+                    setmouseMoveStartX(curX)
+                    shiftRightMore(shiftCount)
+                }
+        }
+    }
+
+    function shiftLeftMore(shiftCount){
+
+        if(showPreloader)return;
+
+        if(offset-shiftCount>0){
+            setOffset(offset-shiftCount)
+        }else{
+            if(offset){
+                setOffset(0)
+            }
+        }
+    }
+
+    function shiftRightMore(shiftCount){//need check on max_count
+
+        if(showPreloader)return;
+
+        console.log("dataForCharts + shiftRightMore")
+        console.log(dataForCharts.length)
+
+        if(dataForCharts.length==0)return;
+
+        let tmpMax = dataForCharts[0].count;
+
+        if(offset+shiftCount<=tmpMax){
+            setOffset(offset + shiftCount)
+        }else{
+            setOffset(tmpMax - offset)
+        }
+    }
+
+
 
     return (
 
-            <div className="App" >
+            <div className="App" onMouseUp={myMouseUp}>
 
 
                 <Row className="d-flex">
@@ -116,16 +207,11 @@ function App() {
                 </Row>
 
 
-                <div style={{width: 1600, height: 800, cursor: 'pointer'}}>
-
-
-
-
+                <div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
 
                     <Chart
                         dataForCharts={dataForCharts}
                     />
-
                     {showPreloader && <Preloader color="#00BFFF" height={80} width={80}  />}
                 </div>
 
