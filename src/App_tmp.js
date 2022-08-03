@@ -199,7 +199,7 @@ function App() {
                         </Button>
 
                         <div  className='m-2'>
-                            {`Agregation ${aggregation}`}
+                            {`Agregation ${agregationsMultipliers[aggregation]}`}
                         </div>
 
                     </Col>
