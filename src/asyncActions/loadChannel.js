@@ -9,7 +9,7 @@ export const fetchChannel = (channel, agregation, offset=0, limit=400)=>{
     return dispatch =>{
 
 
-        fetch(process.env.REACT_APP_STAS_API+hardcode_key+'/'+channel+'/'+agregation+'/?skip='+offset+'&limit='+limit, {
+        fetch(process.env.REACT_APP_STAS_API+hardcode_key+'/'+channel+'/'+agregation+'/?second_start='+offset+'&seconds_count='+limit, {
             //mode: 'no-cors',
             method: "GET",
             headers:{

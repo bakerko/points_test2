@@ -4,14 +4,15 @@ const GET_CHANNEL = "GET_CHANNEL"
 const DROP_CHART_DATA = "DROP_CHART_DATA"
 
 const defaultState={
-    channelsNumber:17,
+    channelsNumber:5,
     //agregationsMultipliers:[40, 50, 100, 125, 200, 250, 400, 500, 1000],
 
-    agregationsMultipliers:[1000, 500, 400, 250, 200, 125, 100, 50, 40],
-    //agregationsMultipliers:[100, 125, 200, 250, 400, 500, 1000],
+    //agregationsMultipliers:[1000, 500, 400, 250, 200, 125, 100, 50, 40],
+    agregationsMultipliers:[100, 125, 200, 250, 400, 500, 1000],
     //agregationsMultipliers:[400, 500, 1000],
     dataLoaded: false,
     dataForCharts:[],
+    secondsOnScreen:10,
     pointsOnScreen: 400,
     //showPoints: 160000
     showPoints: 16000

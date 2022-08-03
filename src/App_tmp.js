@@ -21,6 +21,10 @@ function App() {
 
     const showPoints = useSelector(state=>state.api.showPoints)
 
+    const secondsOnScreen = useSelector(state=>state.api.secondsOnScreen)
+
+
+
 
     const [offset, setOffset] = useState(0);
 
@@ -36,6 +40,7 @@ function App() {
     const chartWidth=1600;
 
 
+
     useEffect(() => {
 
         if(!loadingChannel){
@@ -43,7 +48,7 @@ function App() {
 
             console.log("o_O-->showPreloader = "+showPreloader)
 
-            loadAllChannels(agregationsMultipliers[aggregation], channelsNumber, offset, showPoints/agregationsMultipliers[aggregation])
+            loadAllChannels(agregationsMultipliers[aggregation], channelsNumber, offset, secondsOnScreen)
         }
 
         if(dataForCharts.length==channelsNumber){
@@ -179,16 +184,13 @@ function App() {
         }
     }
 
-
+//<div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
 
     return (
 
             <div className="App" onMouseUp={myMouseUp}>
-
-
                 <Row className="d-flex">
                     <Col md={3}>
-
 
                         <Button  className='m-2' onClick={changeScaleDown}>
                             +
@@ -206,7 +208,7 @@ function App() {
                 </Row>
 
 
-                <div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
+                <div style={{width: 1600, height: 800, cursor: 'pointer'}} >
 
                     <Chart
                         dataForCharts={dataForCharts}
