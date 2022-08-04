@@ -201,7 +201,7 @@ function App() {
                         </Button>
 
                         <div  className='m-2'>
-                            {`Agregation ${agregationsMultipliers[aggregation]} (new build:))`}
+                            {`Agregation ${agregationsMultipliers[aggregation]} agr-count ${agregationsMultipliers.length}`}
                         </div>
 
                     </Col>
