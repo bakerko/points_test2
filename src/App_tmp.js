@@ -8,8 +8,9 @@ import Chart from './components/Chart'
 import {useDispatch, useSelector} from "react-redux";
 
 import {fetchChannel} from "./asyncActions/loadChannel";
-import Preloader from "./components/Preloader"
+import PreloaderV2 from "./components/PreloaderV2"
 import {dropChartData} from "./reducers/fileDataReducer";
+
 
 
 function App() {
@@ -31,12 +32,12 @@ function App() {
     const [loadingChannel, setLoadingChannel] = useState(false);
     const [showPreloader, setShowPreloader] = useState(true);
 
-    const [aggregation, setAggregation] = useState(9);
+    const [aggregation, setAggregation] = useState(0);
 
     const [mouseDown, setMouseDown] = useState(0);
     const [mouseMoveStartX, setmouseMoveStartX] = useState(0);
 
-    const minimumShift=5; //percents
+    const minimumShift=10; //percents
     const chartWidth=1600;
 
 
@@ -81,13 +82,14 @@ function App() {
 
 
     useEffect(() => {
+
         if(loadingChannel) {
             dispatch(dropChartData([]))
             setLoadingChannel(false)
             setShowPreloader(true)
         }
 
-        console.log("o_O --> offset = "+offset)
+        //console.log("o_O --> offset = "+offset)
 
     }, [offset])
 
@@ -135,21 +137,18 @@ function App() {
 
             let shiftByChartWidth = delta/chartWidth;
 
-            let tmpPercentShift = shiftByChartWidth*100;
-            let shiftCount = Math.ceil(Math.abs(showPoints/agregationsMultipliers[aggregation]*shiftByChartWidth))
+            let shiftCount = Math.floor(Math.abs(secondsOnScreen*shiftByChartWidth))
 
-            shiftCount=4;
+            if(Math.abs(shiftByChartWidth*100)>=minimumShift) {
 
-            if(Math.abs(shiftByChartWidth*100)>=minimumShift)
-                console.log("make shift = "+shiftCount)
-
-                if(delta>0){
+                if (delta > 0) {
                     setmouseMoveStartX(curX)
                     shiftLeftMore(shiftCount)
-                }else{
+                } else {
                     setmouseMoveStartX(curX)
                     shiftRightMore(shiftCount)
                 }
+            }
         }
     }
 
@@ -184,7 +183,7 @@ function App() {
         }
     }
 
-//<div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
+
 
     return (
 
@@ -208,12 +207,13 @@ function App() {
                 </Row>
 
 
-                <div style={{width: 1600, height: 800, cursor: 'pointer'}} >
+                <div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
+
 
                     <Chart
                         dataForCharts={dataForCharts}
                     />
-                    {showPreloader && <Preloader color="#00BFFF" height={80} width={80}  />}
+                    {showPreloader && <PreloaderV2 color="#00BFFF" height={80} width={80}  />}
                 </div>
 
 
