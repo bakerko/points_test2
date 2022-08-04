@@ -5,10 +5,10 @@ const DROP_CHART_DATA = "DROP_CHART_DATA"
 
 const defaultState={
     channelsNumber:13,
-    //agregationsMultipliers:[40, 50, 100, 125, 200, 250, 400, 500, 1000],
+    agregationsMultipliers:[40, 50, 100, 125, 200, 250, 400, 500, 1000],
 
     //agregationsMultipliers:[1000, 500, 400, 250, 200, 125, 100, 50, 40],
-    agregationsMultipliers:[100, 125, 200, 250, 400, 500, 1000],
+    //agregationsMultipliers:[100, 125, 200, 250, 400, 500, 1000],
     //agregationsMultipliers:[400, 500, 1000],
     dataLoaded: false,
     dataForCharts:[],
