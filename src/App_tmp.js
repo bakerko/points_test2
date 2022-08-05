@@ -17,6 +17,7 @@ function App() {
 
     const dispatch = useDispatch()
     const agregationsMultipliers = useSelector(state=>state.api.agregationsMultipliers)
+
     const dataForCharts = useSelector(state=>state.api.dataForCharts)
     const channelsNumber = useSelector(state=>state.api.channelsNumber)
 
@@ -24,7 +25,7 @@ function App() {
 
     const secondsOnScreen = useSelector(state=>state.api.secondsOnScreen)
 
-
+    const [showChannels, setShowChannels] = useState(5);
 
 
     const [offset, setOffset] = useState(0);
@@ -32,7 +33,7 @@ function App() {
     const [loadingChannel, setLoadingChannel] = useState(false);
     const [showPreloader, setShowPreloader] = useState(true);
 
-    const [aggregation, setAggregation] = useState(9);
+    const [aggregation, setAggregation] = useState(0);
 
     const [mouseDown, setMouseDown] = useState(0);
     const [mouseMoveStartX, setmouseMoveStartX] = useState(0);
@@ -42,26 +43,31 @@ function App() {
 
 
 
+
+    useEffect(() => {
+
+    })
+
+
     useEffect(() => {
 
         if(!loadingChannel){
             setLoadingChannel(true)
 
-            console.log("o_O-->showPreloader = "+showPreloader)
+            console.log("o_O-->showChannels = "+showChannels)
 
-            loadAllChannels(agregationsMultipliers[aggregation], channelsNumber, offset, secondsOnScreen)
+            loadAllChannels(agregationsMultipliers[aggregation], showChannels, offset, secondsOnScreen)
         }
 
-        if(dataForCharts.length==channelsNumber){
+        if(dataForCharts.length==showChannels){
             setShowPreloader(false)
         }
-
 
     }, [dataForCharts])
 
 
-    function loadAllChannels(agregation, channelsNumber, offset,  limit) {
-        for(let channel=0;channel<channelsNumber;channel++) {
+    function loadAllChannels(agregation, showChannels, offset,  limit) {
+        for(let channel=0;channel<showChannels;channel++) {
 
             dispatch(fetchChannel(channel, agregation, offset,  limit))
         }
@@ -78,7 +84,7 @@ function App() {
 
         //console.log("aggregation = "+aggregation)
 
-    }, [aggregation])
+    }, [aggregation, showChannels])
 
 
     useEffect(() => {
@@ -184,27 +190,54 @@ function App() {
     }
 
 
+    function changeShowChunnels(event){
+        if(showPreloader)return;
+
+        if(showChannels!==event.target.value&&showChannels<=channelsNumber){
+            setShowChannels(event.target.value)
+        }
+    }
+
+
+    function changeAggregation(event){
+        if(showPreloader)return;
+
+        if(aggregation!==event.target.value){
+            setAggregation(event.target.value)
+        }
+
+    }
+
 
     return (
 
             <div className="App" onMouseUp={myMouseUp}>
-                <Row className="d-flex">
-                    <Col md={3}>
+                    <div style={{width: "100%", display: "flex"}}>
 
-                        <Button  className='m-2' onClick={changeScaleDown}>
-                            +
-                        </Button>
-
-                        <Button className='m-2' onClick={changeScaleUp}>
-                            -
-                        </Button>
-
-                        <div  className='m-2'>
-                            {`Agregation ${agregationsMultipliers[aggregation]} agr-count ${agregationsMultipliers.length}`}
+                        <div style={{marginLeft:"10px"}}>
+                            <div style={{marginLeft:"5px"}}>Aggregation:</div>
+                            <select defaultValue={aggregation} onChange={changeAggregation}>
+                                {
+                                    agregationsMultipliers.map((item, i)=> (
+                                            <option key={i} value={i}>{item}</option>
+                                        )
+                                    )
+                                }
+                            </select>
                         </div>
 
-                    </Col>
-                </Row>
+                        <div style={{marginLeft:"10px"}}>
+                            <div style={{marginLeft:"5px"}}>Channels count:</div>
+                            <select defaultValue={showChannels} onChange={changeShowChunnels}>
+
+                                {[...Array(channelsNumber)].map((x,i)=>
+                                    <option key={i} value={i+1}>{i+1}</option>
+                                )}
+
+                            </select>
+                        </div>
+                    </div>
+
 
 
                 <div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
