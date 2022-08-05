@@ -32,7 +32,7 @@ function App() {
     const [loadingChannel, setLoadingChannel] = useState(false);
     const [showPreloader, setShowPreloader] = useState(true);
 
-    const [aggregation, setAggregation] = useState(0);
+    const [aggregation, setAggregation] = useState(9);
 
     const [mouseDown, setMouseDown] = useState(0);
     const [mouseMoveStartX, setmouseMoveStartX] = useState(0);
