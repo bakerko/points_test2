@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 
 import {fetchChannel} from "./asyncActions/loadChannel";
 import PreloaderV2 from "./components/PreloaderV2"
-import {dropChartData} from "./reducers/fileDataReducer";
+import {dropChannelLoaded, dropChartData} from "./reducers/fileDataReducer";
 
 
 
@@ -17,23 +17,28 @@ function App() {
 
     const dispatch = useDispatch()
     const agregationsMultipliers = useSelector(state=>state.api.agregationsMultipliers)
+    const [aggregation, setAggregation] = useState(0);
 
     const dataForCharts = useSelector(state=>state.api.dataForCharts)
     const channelsNumber = useSelector(state=>state.api.channelsNumber)
+    const loadedChannelsCount = useSelector(state=>state.api.loadedChannelsCount)
 
     const showPoints = useSelector(state=>state.api.showPoints)
 
-    const secondsOnScreen = useSelector(state=>state.api.secondsOnScreen)
+    const secondsOnScreenArray = useSelector(state=>state.api.secondsOnScreenArray)//array
+    const [secondsOnScreen, setSecondsOnScreen] = useState(3);
+
 
     const [showChannels, setShowChannels] = useState(5);
-
-
     const [offset, setOffset] = useState(0);
-
     const [loadingChannel, setLoadingChannel] = useState(false);
     const [showPreloader, setShowPreloader] = useState(true);
 
-    const [aggregation, setAggregation] = useState(0);
+    const [needLoad, setNeedLoad] = useState(false);
+
+    const [limit, setLimit] = useState(secondsOnScreenArray[secondsOnScreen]);
+
+
 
     const [mouseDown, setMouseDown] = useState(0);
     const [mouseMoveStartX, setmouseMoveStartX] = useState(0);
@@ -51,53 +56,43 @@ function App() {
 
     useEffect(() => {
 
-        if(!loadingChannel){
-            setLoadingChannel(true)
+        //console.log("needLoad = "+needLoad)
 
-            console.log("o_O-->showChannels = "+showChannels)
+        if(needLoad){
+            setShowPreloader(true)
+            setNeedLoad(false)
 
-            loadAllChannels(agregationsMultipliers[aggregation], showChannels, offset, secondsOnScreen)
+            loadAllChannels(agregationsMultipliers[aggregation], showChannels, offset, limit)
         }
+    }, [needLoad])
 
-        if(dataForCharts.length==showChannels){
+
+    useEffect(() => {
+        if(loadedChannelsCount==showChannels){
             setShowPreloader(false)
+            dispatch(dropChannelLoaded())
         }
-
-    }, [dataForCharts])
+    }, [loadedChannelsCount])
 
 
     function loadAllChannels(agregation, showChannels, offset,  limit) {
-        for(let channel=0;channel<showChannels;channel++) {
 
+        for(let channel=0;channel<showChannels;channel++) {
             dispatch(fetchChannel(channel, agregation, offset,  limit))
         }
-
     }
 
 
     useEffect(() => {
-        if(loadingChannel) {
-            dispatch(dropChartData([]))
-            setLoadingChannel(false)
-            setShowPreloader(true)
-        }
+        setLimit(secondsOnScreenArray[secondsOnScreen])
+        dispatch(dropChartData())
+        setNeedLoad(true)
 
-        //console.log("aggregation = "+aggregation)
+        console.log("offset = "+offset)
 
-    }, [aggregation, showChannels])
+    }, [aggregation, showChannels, secondsOnScreen, offset])
 
 
-    useEffect(() => {
-
-        if(loadingChannel) {
-            dispatch(dropChartData([]))
-            setLoadingChannel(false)
-            setShowPreloader(true)
-        }
-
-        //console.log("o_O --> offset = "+offset)
-
-    }, [offset])
 
 
     const changeScaleDown = () => {
@@ -120,22 +115,43 @@ function App() {
 
     }
 
-    const myMouseUp=()=>{
-        setMouseDown(0)
+    const myMouseUp=(e)=>{
+        //setMouseDown(0)
+
+
+        let curX = e.pageX;
+        let delta = curX-mouseMoveStartX;
+        let tmp = delta
+
+        let shiftByChartWidth = delta/chartWidth;
+
+        let shiftCount = Math.floor(Math.abs(secondsOnScreenArray[secondsOnScreen]*shiftByChartWidth))
+
+        if(Math.abs(shiftByChartWidth*100)>=minimumShift&&!showPreloader) {
+
+            if (delta > 0) {
+                setmouseMoveStartX(curX)
+                shiftLeftMore(shiftCount)
+            } else {
+                setmouseMoveStartX(curX)
+                shiftRightMore(shiftCount)
+            }
+        }
 
     }
 
-    const myMouseDown=(e)=>{
-        setMouseDown(1)
-        setmouseMoveStartX(e.pageX)
-
+    const myMouseDown=(e)=> {
+        //if (mouseDown == 0) {
+        //    setMouseDown(1)
+            setmouseMoveStartX(e.pageX)
+        //}
     }
 
     const mouseMove=(e)=>{
         let tmp = e.pageX;
 
         //console.log("mouseDown = "+mouseDown)
-
+/*
         if(mouseDown){
             let curX = e.pageX;
             let delta = curX-mouseMoveStartX;
@@ -143,9 +159,11 @@ function App() {
 
             let shiftByChartWidth = delta/chartWidth;
 
-            let shiftCount = Math.floor(Math.abs(secondsOnScreen*shiftByChartWidth))
+            let shiftCount = Math.floor(Math.abs(secondsOnScreenArray[secondsOnScreen]*shiftByChartWidth))
 
-            if(Math.abs(shiftByChartWidth*100)>=minimumShift) {
+            if(Math.abs(shiftByChartWidth*100)>=minimumShift&&!showPreloader) {
+
+                setMouseDown(0)
 
                 if (delta > 0) {
                     setmouseMoveStartX(curX)
@@ -155,12 +173,22 @@ function App() {
                     shiftRightMore(shiftCount)
                 }
             }
-        }
+        }*/
+    }
+
+    function screenToLeft(){
+        shiftLeftMore(secondsOnScreenArray[secondsOnScreen])
+    }
+
+    function screenToRight(){
+        shiftRightMore(secondsOnScreenArray[secondsOnScreen])
     }
 
     function shiftLeftMore(shiftCount){
 
         if(showPreloader)return;
+
+        setLimit(shiftCount)
 
         if(offset-shiftCount>0){
             setOffset(offset-shiftCount)
@@ -175,12 +203,14 @@ function App() {
 
         if(showPreloader)return;
 
-        console.log("dataForCharts + shiftRightMore")
-        console.log(dataForCharts.length)
+        setLimit(shiftCount)
+
+       // console.log("dataForCharts + shiftRightMore")
+       // console.log(dataForCharts.length)
 
         if(dataForCharts.length==0)return;
 
-        let tmpMax = dataForCharts[0].count;
+        let tmpMax = dataForCharts[0].count_seconds;
 
         if(offset+shiftCount<=tmpMax){
             setOffset(offset + shiftCount)
@@ -199,22 +229,34 @@ function App() {
     }
 
 
+    function changeSecondsOnScreen(event){
+        if(showPreloader)return;
+
+        if(secondsOnScreen!==event.target.value){
+            setSecondsOnScreen(event.target.value)
+        }
+    }
+
+
     function changeAggregation(event){
         if(showPreloader)return;
 
         if(aggregation!==event.target.value){
             setAggregation(event.target.value)
         }
-
     }
 
 
     return (
 
+
             <div className="App" onMouseUp={myMouseUp}>
+
+                need load : {needLoad?"true":"false"}
+
                     <div style={{width: "100%", display: "flex"}}>
 
-                        <div style={{marginLeft:"10px"}}>
+                        <div style={{marginLeft:"15px"}}>
                             <div style={{marginLeft:"5px"}}>Aggregation:</div>
                             <select defaultValue={aggregation} onChange={changeAggregation}>
                                 {
@@ -226,7 +268,7 @@ function App() {
                             </select>
                         </div>
 
-                        <div style={{marginLeft:"10px"}}>
+                        <div style={{marginLeft:"15px"}}>
                             <div style={{marginLeft:"5px"}}>Channels count:</div>
                             <select defaultValue={showChannels} onChange={changeShowChunnels}>
 
@@ -236,6 +278,38 @@ function App() {
 
                             </select>
                         </div>
+
+
+                        <div style={{marginLeft:"15px"}}>
+                            <div style={{marginLeft:"5px"}}>Seconds on Screen:</div>
+                            <select defaultValue={secondsOnScreen} onChange={changeSecondsOnScreen}>
+
+                                {secondsOnScreenArray.map((item,i)=>
+                                    <option key={i} value={i}>{item}</option>
+                                )}
+
+                            </select>
+                        </div>
+
+                        <div style={{marginLeft:"15px"}}>
+                            <div>Move by {secondsOnScreenArray[secondsOnScreen]} seconds (screen):</div>
+
+                            <div style={{width:"100%", display: "flex"}}>
+                                <div style={{width:"40%"}}>
+                                    <Button key={1}   onClick={screenToLeft}>
+                                        Left
+                                    </Button>
+
+                                </div>
+                                <div style={{width:"40%"}}>
+                                    <Button key={2}  onClick={screenToRight}>
+                                        Right
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
 
 

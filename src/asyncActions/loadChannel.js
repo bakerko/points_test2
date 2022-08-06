@@ -1,6 +1,6 @@
 
 
-import {getChannel} from "../reducers/fileDataReducer";
+import {getChannel, oneChannelLoaded} from "../reducers/fileDataReducer";
 
 export const fetchChannel = (channel, agregation, offset=0, limit=400)=>{
 
@@ -26,9 +26,14 @@ export const fetchChannel = (channel, agregation, offset=0, limit=400)=>{
                     data: json.data,
                     physical_max: json.headers.physical_max,
                     physical_min: json.headers.physical_min,
-                    count: json.count,
+                    offset: offset,
+                    count_seconds: json.count/json.headers.sample_rate,
+                    sample_rate: json.headers.sample_rate,
+                    limit: limit
 
                 }))
+
+                dispatch(oneChannelLoaded())
             })
 
 

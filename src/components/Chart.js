@@ -112,8 +112,31 @@ const Chart = ({
 
 
     useEffect(() => {
-
         if(dataForCharts.length<=1)return;
+
+
+        //sort dataForCharts
+        let sortedCharts=[]
+        dataForCharts.map((item,i)=>{
+            sortedCharts[item.channel]=item
+        })
+
+        let lablesArray=[]
+        if(dataForCharts[0]){
+            let labelOffset=dataForCharts[0].offset
+            let rate = dataForCharts[0].sample_rate
+
+            dataForCharts[0].data.map((item, i)=>{
+                //let tmpI=i+1
+
+                let tmpLable=Math.floor(((i%rate)/rate)*100)/100
+                tmpLable=tmpLable+(i-i%rate)/rate
+
+                lablesArray.push(tmpLable+labelOffset)
+
+            })
+        }
+
 
 
         //console.log('o_O chart refresh')
@@ -131,8 +154,8 @@ const Chart = ({
         console.log(dataForCharts)
 */
 
-        if(dataForCharts.length>0)
-            dataForCharts.map((item, index)=> {
+        if(sortedCharts.length>0)
+            sortedCharts.map((item, index)=> {
 
                 //console.log("shift y  = ")
                 //console.log(yShift*2)
@@ -169,7 +192,7 @@ const Chart = ({
         })
 
         const data = {
-            labels: tmp_indexes,
+            labels: lablesArray,
             datasets: datasets,
          };
 
