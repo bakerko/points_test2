@@ -258,8 +258,6 @@ function App() {
 
             <div className="App" onMouseUp={myMouseUp}>
 
-                need load : {needLoad?"true":"false"}
-
                     <div style={{width: "100%", display: "flex"}}>
 
                         <div style={{marginLeft:"15px"}}>
