@@ -8,7 +8,7 @@ export const fetchData = (channel, agregation, offset=0, limit=400)=>{
 
     return dispatch =>{
 
-        fetch(process.env.REACT_APP_STAS_API+'headers/'+hardcode_key, {
+        fetch(process.env.REACT_APP_STAS_API+'headers/'+hardcode_key+'/', {
             //mode: 'no-cors',
             method: "GET",
             headers:{

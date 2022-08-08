@@ -29,7 +29,7 @@ const Chart = ({
     console.log(dataForCharts)
 */
 
-console.log("startData = "+startData)
+//console.log("startData = "+startData)
 
     ChartJS.register(
         CategoryScale,
