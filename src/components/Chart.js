@@ -16,7 +16,8 @@ import { Line } from 'react-chartjs-2';
 
 
 const Chart = ({
-                   dataForCharts
+                   dataForCharts,
+                   startData
                }) => {
 
 
@@ -27,6 +28,8 @@ const Chart = ({
     console.log('dataForCharts')
     console.log(dataForCharts)
 */
+
+console.log("startData = "+startData)
 
     ChartJS.register(
         CategoryScale,
@@ -114,6 +117,8 @@ const Chart = ({
     useEffect(() => {
         if(dataForCharts.length<=1)return;
 
+        let tmpDate = new Date(startData)
+
 
         //sort dataForCharts
         let sortedCharts=[]
@@ -128,6 +133,20 @@ const Chart = ({
 
             dataForCharts[0].data.map((item, i)=>{
                 //let tmpI=i+1
+
+
+                if(i==0) {
+                    if (labelOffset == 0) {
+
+
+                        lablesArray.push(tmpDate.toLocaleString('en-GB', { timeZone: 'UTC' }))
+                    }else {
+                        tmpDate.setSeconds(tmpDate.getSeconds() + labelOffset);
+                        lablesArray.push(tmpDate.toLocaleString('en-GB', { timeZone: 'UTC' }))
+                    }
+
+                    return
+                }
 
                 let tmpLable=Math.floor(((i%rate)/rate)*100)/100
                 tmpLable=tmpLable+(i-i%rate)/rate
@@ -198,7 +217,7 @@ const Chart = ({
 
         setData(data)
 
-    }, [dataForCharts]);//, agrIndexes
+    }, [dataForCharts, startData]);//, agrIndexes
 
 
 

@@ -10,6 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchChannel} from "./asyncActions/loadChannel";
 import PreloaderV2 from "./components/PreloaderV2"
 import {dropChannelLoaded, dropChartData} from "./reducers/fileDataReducer";
+import {fetchData} from "./asyncActions/loadData";
 
 
 
@@ -18,6 +19,8 @@ function App() {
     const dispatch = useDispatch()
     const agregationsMultipliers = useSelector(state=>state.api.agregationsMultipliers)
     const [aggregation, setAggregation] = useState(0);
+
+    const startData = useSelector(state=>state.api.startData)
 
     const dataForCharts = useSelector(state=>state.api.dataForCharts)
     const channelsNumber = useSelector(state=>state.api.channelsNumber)
@@ -51,16 +54,19 @@ function App() {
 
     useEffect(() => {
 
+
     })
 
 
     useEffect(() => {
 
-        //console.log("needLoad = "+needLoad)
-
         if(needLoad){
             setShowPreloader(true)
             setNeedLoad(false)
+
+            if(startData==''){
+                dispatch(fetchData())
+            }
 
             loadAllChannels(agregationsMultipliers[aggregation], showChannels, offset, limit)
         }
@@ -319,6 +325,7 @@ function App() {
 
                     <Chart
                         dataForCharts={dataForCharts}
+                        startData={startData}
                     />
                     {showPreloader && <PreloaderV2 color="#00BFFF" height={80} width={80}  />}
                 </div>

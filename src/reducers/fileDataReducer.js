@@ -6,6 +6,8 @@ const DROP_CHART_DATA = "DROP_CHART_DATA"
 const ONE_CHANNEL_LOADED = "ONE_CHANNEL_LOADED"
 const DROP_CHANNEL_LOADED = "DROP_CHANNEL_LOADED"
 
+const LOAD_DATA = "LOAD_DATA"
+
 
 const defaultState={
     channelsNumber:17,
@@ -14,6 +16,8 @@ const defaultState={
     agregationsMultipliers:[1000, 500, 400, 250, 200, 125, 100, 50, 40, 25, 20, 10, 8, 5, 4, 2],
     //agregationsMultipliers:[100, 125, 200, 250, 400, 500, 1000],
     //agregationsMultipliers:[400, 500, 1000],
+
+    startData: '',
 
     loadedChannelsCount:0,
 
@@ -33,6 +37,13 @@ export default function fileDataReducer(state=defaultState, action){
             return {
                 ...state,
                 dataForCharts: [...state.dataForCharts, action.payload]
+            }
+
+        case LOAD_DATA:
+            //console.log("action.payload =" +action.payload)
+            return {
+                ...state,
+                startData: action.payload
             }
 
             /*
@@ -119,4 +130,6 @@ export const dropChartData = (payload)=>({type:DROP_CHART_DATA, payload})
 
 export const dropChannelLoaded = (payload)=>({type:DROP_CHANNEL_LOADED, payload})
 export const oneChannelLoaded = (payload)=>({type:ONE_CHANNEL_LOADED, payload})
+
+export const loadSomeData = (payload)=>({type:LOAD_DATA, payload})
 
