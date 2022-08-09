@@ -4,13 +4,14 @@ import {Button, Row, Col} from "react-bootstrap";
 import React, {useEffect, useState} from 'react';
 import fileDataStore from './store/FileDataStore'
 
-import Chart from './components/Chart'
+import Chart from './components/Chart3'
 import {useDispatch, useSelector} from "react-redux";
 
 import {fetchChannel} from "./asyncActions/loadChannel";
 import PreloaderV2 from "./components/PreloaderV2"
 import {dropChannelLoaded, dropChartData} from "./reducers/fileDataReducer";
 import {fetchData} from "./asyncActions/loadData";
+import ChartAxeX from "./components/ChartAxeX";
 
 
 
@@ -318,13 +319,21 @@ function App() {
 
 
 
-                <div style={{width: 1600, height: 800, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
+                <div style={{paddingLeft:"2%", width: 1600, height: 120, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
 
+                    {dataForCharts.map((oneChart,i)=>
+                        <Chart
+                            key={i}
+                            dataForCharts={oneChart}
+                            startData={startData}
+                        />
+                    )}
 
-                    <Chart
-                        dataForCharts={dataForCharts}
+                    <ChartAxeX
+                        dataForCharts={dataForCharts[0]}
                         startData={startData}
                     />
+
                     {showPreloader && <PreloaderV2 color="#00BFFF" height={80} width={80}  />}
                 </div>
 

@@ -193,6 +193,23 @@ const Chart = ({
                     return y+yShift*2
                 })
 
+                /*
+                if(index==16){
+
+                    console.log("--->index = "+index)
+
+                    tmp_mas=[...Array(40)].map((item,i)=>{
+                        if((i+1)%10==0){
+                            return (i+1)/10
+                        }else{
+                            return
+                        }
+                    })
+
+                    console.log("--->tmp_mas = "+tmp_mas)
+                }
+                */
+
                 datasets.push(
                     {
                         label: item.label,
