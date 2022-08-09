@@ -12,6 +12,7 @@ import PreloaderV2 from "./components/PreloaderV2"
 import {dropChannelLoaded, dropChartData} from "./reducers/fileDataReducer";
 import {fetchData} from "./asyncActions/loadData";
 import ChartAxeX from "./components/ChartAxeX";
+import ChartAxeY from "./components/ChartAxeY";
 
 
 
@@ -31,6 +32,8 @@ function App() {
 
     const secondsOnScreenArray = useSelector(state=>state.api.secondsOnScreenArray)//array
     const [secondsOnScreen, setSecondsOnScreen] = useState(3);
+
+    const [fileType, setFileType] = useState(0);
 
 
     const [showChannels, setShowChannels] = useState(5);
@@ -69,7 +72,7 @@ function App() {
                 dispatch(fetchData())
             }
 
-            loadAllChannels(agregationsMultipliers[aggregation], showChannels, offset, limit)
+            loadAllChannels(agregationsMultipliers[aggregation], showChannels, offset, limit, fileType)
         }
     }, [needLoad])
 
@@ -82,10 +85,10 @@ function App() {
     }, [loadedChannelsCount])
 
 
-    function loadAllChannels(agregation, showChannels, offset,  limit) {
+    function loadAllChannels(agregation, showChannels, offset,  limit, fileType=0) {
 
         for(let channel=0;channel<showChannels;channel++) {
-            dispatch(fetchChannel(channel, agregation, offset,  limit))
+            dispatch(fetchChannel(channel, agregation, offset,  limit, fileType))
         }
     }
 
@@ -95,9 +98,9 @@ function App() {
         dispatch(dropChartData())
         setNeedLoad(true)
 
-        console.log("offset = "+offset)
+        //console.log("offset = "+offset)
 
-    }, [aggregation, showChannels, secondsOnScreen, offset])
+    }, [aggregation, showChannels, secondsOnScreen, offset, fileType])
 
 
 
@@ -253,6 +256,15 @@ function App() {
         }
     }
 
+    function changeFileType(event){
+        if(event.target.value==0){
+            if(fileType!=0)setFileType(0)
+        }else{
+            if(fileType!=1)setFileType(1)
+        }
+    }
+
+
 
     return (
 
@@ -290,7 +302,7 @@ function App() {
                             <select defaultValue={secondsOnScreen} onChange={changeSecondsOnScreen}>
 
                                 {secondsOnScreenArray.map((item,i)=>
-                                    <option key={i} value={i}>{item}</option>
+                                    <option key={i} value={i}>Interval {item} seconds</option>
                                 )}
 
                             </select>
@@ -314,6 +326,18 @@ function App() {
                             </div>
                         </div>
 
+                        <div style={{marginLeft:"15px"}}>
+                            <div style={{marginLeft:"5px"}}>Type of Reading file:</div>
+                            <select defaultValue={0} onChange={changeFileType}>
+
+
+                                <option key={0} value={0}>First type (old one)</option>
+                                <option key={1} value={1}>Second type (new one)</option>
+
+
+                            </select>
+                        </div>
+
 
                     </div>
 
@@ -322,17 +346,38 @@ function App() {
                 <div style={{paddingLeft:"2%", width: 1600, height: 120, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
 
                     {dataForCharts.map((oneChart,i)=>
-                        <Chart
-                            key={i}
-                            dataForCharts={oneChart}
-                            startData={startData}
-                        />
+                        <div key={i} style={{width: "100%", height:"100%", display:"flex", paddingTop:"1%"}}>
+                            <div style={{width: "6%", height:"109%", marginTop:"-0.3%"}}>
+                                <ChartAxeY
+                                    key={i}
+                                    dataForCharts={oneChart}
+                                />
+                            </div>
+
+                            <div style={{width: "85%", height:"100%"}}>
+                                <Chart
+                                    key={i}
+                                    dataForCharts={oneChart}
+                                />
+                            </div>
+                        </div>
                     )}
 
-                    <ChartAxeX
-                        dataForCharts={dataForCharts[0]}
-                        startData={startData}
-                    />
+
+                    <div style={{width: "100%", display:"flex"}}>
+                        <div style={{width: "6%"}}>
+                        </div>
+
+                        <div style={{width: "85.55%"}}>
+                            <ChartAxeX
+                                dataForCharts={dataForCharts[0]}
+                                startData={startData}
+                            />
+                        </div>
+                    </div>
+
+
+
 
                     {showPreloader && <PreloaderV2 color="#00BFFF" height={80} width={80}  />}
                 </div>

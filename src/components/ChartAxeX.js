@@ -55,6 +55,10 @@ const ChartAxeX = ({
                 ticks:{
                     display:false,
                 }*/
+
+                grid:{
+                    drawTicks:false
+                }
             },
             y: {
                 display:false,
@@ -62,6 +66,9 @@ const ChartAxeX = ({
                 ticks:{
                     display:false,
                 }*/
+                grid:{
+                    drawTicks:false
+                }
             }
         },
 
@@ -103,6 +110,7 @@ const ChartAxeX = ({
 
             dataForCharts.data.map((item, i)=>{
 
+                /*
                 if(i==0) {
 
                     if (labelOffset == 0) {
@@ -115,7 +123,7 @@ const ChartAxeX = ({
                     return
 
                     //lablesArray.push(0)
-                }
+                }*/
 
                 let tmpLable=Math.floor(((i%rate)/rate)*100)/100
                 tmpLable=tmpLable+(i-i%rate)/rate

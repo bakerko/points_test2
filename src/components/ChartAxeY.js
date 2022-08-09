@@ -15,7 +15,7 @@ import { Line } from 'react-chartjs-2';
 
 
 
-const Chart = ({
+const ChartAxeY = ({
                    dataForCharts
 
                }) => {
@@ -42,50 +42,55 @@ const Chart = ({
 
     ]
 
+    console.log("----------")
+    console.log("channel = "+dataForCharts.channel)
+    console.log("label = "+dataForCharts.label)
+    console.log("min = "+Math.min(...dataForCharts.data))
+    console.log("min = "+Math.max(...dataForCharts.data))
+
+    let tmpDelta=Math.max(...dataForCharts.data)-Math.min(...dataForCharts.data)
+    console.log("delta = "+tmpDelta)
+    console.log("delta/5 = "+tmpDelta/5)
+    console.log("data = "+dataForCharts.data)
+
 
 
 
     const options = {
         responsive: true,
         maintainAspectRatio: false,
-
         animation: {
             duration: 0
         },
 
         scales: {
             x: {
-                //display:false,
-                stacked: false,
+
+                display:false,
+
                 ticks:{
                     display:false,
                 },
                 grid:{
-                    drawTicks:false,
+                    drawTicks:false
                 }
             },
             y: {
+                stacked: false,
                 min: Math.min(...dataForCharts.data),
                 max: Math.max(...dataForCharts.data),
-                display:true,
-
-                stacked: false,
                 ticks:{
-                    display:false,
+                    display:true,
 
                     stepSize: (Math.max(...dataForCharts.data)-Math.min(...dataForCharts.data))/5,
-                    maxTicksLimit: 7,
+                    maxTicksLimit: 10,
 
                     //steps:5,
-
                 },
                 grid:{
                     drawTicks:false,
-                    //offset:false,
-                    //drawBorder:false
-
+                    offset:false
                 }
-
             }
         },
 
@@ -101,6 +106,8 @@ const Chart = ({
                 display: false,
                 text: 'Charts',
             },
+
+
         },
 
 
@@ -116,29 +123,31 @@ const Chart = ({
 
 
     useEffect(() => {
-        //if(dataForCharts.length<=1)return;
-
 
         let datasets=[];
 
         let yShift=0;
         let local_counter=0
 
-        let tmp_indexes = []
+        let tmp_indexes = [0]
+        //let tmp_indexes = []
 
-
-
+/*
         if(dataForCharts.data.length>0)
-        dataForCharts.data.map((item, index)=> {
-            tmp_indexes.push(index)
-        })
+            dataForCharts.data.map((item, index)=> {
+                tmp_indexes.push(0)
+            })*/
+
+        let tmp_data = [dataForCharts.physical_max, dataForCharts.physical_min]
+
+
 
         datasets.push(
             {
                 label: dataForCharts.label,
                 data: dataForCharts.data,
-                borderColor: colors[yShift-1],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(0, 0, 0, 0)',
+                backgroundColor: 'rgba(255, 255, 255, 1)',
                 pointRadius: 1,
 
             }
@@ -146,13 +155,10 @@ const Chart = ({
 
         const data = {
             labels: tmp_indexes,
+            //datasets: tmp_data,
+
             datasets: datasets,
          };
-
-        /*
-        if(dataForCharts.channel==16)
-            console.log(dataForCharts.data)
-        */
 
         //console.log("--data--")
         //console.log(data)
@@ -174,4 +180,4 @@ const Chart = ({
 
 };
 
-export default Chart;
+export default ChartAxeY;
