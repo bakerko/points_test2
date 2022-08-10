@@ -26,6 +26,9 @@ function App() {
     const chartGridLines = useSelector(state=>state.api.chartGridLines)
 
     const dataForCharts = useSelector(state=>state.api.dataForCharts)
+
+    const [sortedDataForCharts, setSortedDataForCharts] = useState([]);
+
     const channelsNumber = useSelector(state=>state.api.channelsNumber)
     const loadedChannelsCount = useSelector(state=>state.api.loadedChannelsCount)
 
@@ -78,13 +81,30 @@ function App() {
     }, [needLoad])
 
 
+
     useEffect(() => {
         if(loadedChannelsCount==showChannels){
             setShowPreloader(false)
             dispatch(dropChannelLoaded())
         }
+
+        if(loadedChannelsCount>0){
+            sortChannels()
+        }
+
     }, [loadedChannelsCount])
 
+    function sortChannels(){
+        let tmpArray=[]
+
+        dataForCharts.map((item, index)=>{
+
+            tmpArray[item.channel]=item
+        })
+
+        setSortedDataForCharts([...tmpArray])
+
+    }
 
     function loadAllChannels(agregation, showChannels, offset,  limit, fileType=0) {
 
@@ -347,30 +367,35 @@ function App() {
 
                 <div style={{paddingLeft:"2%", width: 1600, height: 120, cursor: 'pointer'}} onMouseDown={myMouseDown} onMouseMove={mouseMove}>
 
-                    {dataForCharts.map((oneChart,i)=>
-                        <div key={i} style={{width: "100%", height:"100%", display:"flex", paddingTop:"1%"}}>
+                    {sortedDataForCharts.length && sortedDataForCharts.map((oneChart,i)=> {
+                            if(oneChart)
+                           return(
+                                <div key={i} style={{width: "100%", height: "100%", display: "flex", paddingTop: "1%"}}>
 
-                            <div style={{width: "7%", margin: "auto"}}>
-                                {oneChart.label}
-                            </div>
+                                    <div style={{width: "7%", margin: "auto"}}>
+                                        {oneChart.label}
+                                    </div>
 
-                            <div style={{width: "4%", height:"100%", textAlign: "right",  fontSize:" 72%"}}>
-                                {[...Array(chartGridLines)].map((x,index2)=>{
-                                    return (<div key={index2}>{(Math.min(...oneChart.data)+index2*((Math.max(...oneChart.data)-Math.min(...oneChart.data))/(chartGridLines-1))).toString().slice(0, 8)}</div>)
-                                })}
-
-
-                            </div>
-
-                            <div style={{width: "88%", height:"100%"}}>
-                                <Chart
-                                    key={i}
-                                    dataForCharts={oneChart}
-                                />
-                            </div>
+                                    <div style={{width: "4%", height: "100%", textAlign: "right", fontSize: " 72%"}}>
+                                        {[...Array(chartGridLines)].map((x, index2) => {
+                                            return (<div
+                                                key={index2}>{(Math.min(...oneChart.data) + index2 * ((Math.max(...oneChart.data) - Math.min(...oneChart.data)) / (chartGridLines - 1))).toString().slice(0, 8)}</div>)
+                                        })}
 
 
-                        </div>
+                                    </div>
+
+                                    <div style={{width: "88%", height: "100%"}}>
+                                        <Chart
+                                            key={i}
+                                            dataForCharts={oneChart}
+                                        />
+                                    </div>
+
+
+                                </div>
+                           )
+                        }
                     )}
 
 
@@ -407,6 +432,9 @@ function App() {
 
                             <div style={{width: "100%", display:"flex", justifyContent:"space-between", fontSize:"72%", marginLeft:"4px"}}>
                                 {dataForCharts[0]&&[...Array(dataForCharts[0].data.length)].map((x,index)=>{
+
+                                    let delta2=dataForCharts[0].limit/10
+                                    if(index%delta2!=0&&dataForCharts[0].limit>10)return
 
                                     let tmpRate=dataForCharts[0].data.length/dataForCharts[0].limit
 

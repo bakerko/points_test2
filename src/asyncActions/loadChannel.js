@@ -7,12 +7,19 @@ export const fetchChannel = (channel, agregation, offset=0, limit=400, fileType=
     const hardcode_key='R07_20220219_0FFD_736_378_sine31_2mv_Recording_00_SD';
 
     let key='get_data_by_key'
-    if(fileType)key='get_data_by_key_v2'
+    let url=''
+
+    if(fileType){
+        key='get_data_by_key_v2'
+        url=process.env.REACT_APP_STAS_API+key+'/'+hardcode_key+'/'+channel+'/?second_start='+offset+'&seconds_count='+limit
+    }else{
+        url=process.env.REACT_APP_STAS_API+key+'/'+hardcode_key+'/'+channel+'/'+agregation+'/?second_start='+offset+'&seconds_count='+limit
+    }
 
 
     return dispatch =>{
 
-        fetch(process.env.REACT_APP_STAS_API+key+'/'+hardcode_key+'/'+channel+'/'+agregation+'/?second_start='+offset+'&seconds_count='+limit, {
+        fetch(url, {
             //mode: 'no-cors',
             method: "GET",
             headers:{
