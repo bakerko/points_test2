@@ -20,6 +20,7 @@ const defaultState={
     startData: '',
 
     loadedChannelsCount:0,
+    chartGridLines:6,
 
     dataLoaded: false,
     dataForCharts:[],

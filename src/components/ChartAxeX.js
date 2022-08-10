@@ -51,10 +51,10 @@ const ChartAxeX = ({
         scales: {
             x: {
                 //display:false,
-                /*
+
                 ticks:{
                     display:false,
-                }*/
+                },
 
                 grid:{
                     drawTicks:false

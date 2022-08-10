@@ -23,6 +23,7 @@ function App() {
     const [aggregation, setAggregation] = useState(0);
 
     const startData = useSelector(state=>state.api.startData)
+    const chartGridLines = useSelector(state=>state.api.chartGridLines)
 
     const dataForCharts = useSelector(state=>state.api.dataForCharts)
     const channelsNumber = useSelector(state=>state.api.channelsNumber)
@@ -265,6 +266,12 @@ function App() {
     }
 
 
+/*
+    <ChartAxeY
+        key={i}
+        dataForCharts={oneChart}
+    />
+  */
 
     return (
 
@@ -313,15 +320,10 @@ function App() {
 
                             <div style={{width:"100%", display: "flex"}}>
                                 <div style={{width:"40%"}}>
-                                    <Button key={1}   onClick={screenToLeft}>
-                                        Left
-                                    </Button>
-
+                                    <button onClick={screenToLeft}>Left {secondsOnScreenArray[secondsOnScreen]}</button>
                                 </div>
                                 <div style={{width:"40%"}}>
-                                    <Button key={2}  onClick={screenToRight}>
-                                        Right
-                                    </Button>
+                                    <button onClick={screenToRight}>Right {secondsOnScreenArray[secondsOnScreen]}</button>
                                 </div>
                             </div>
                         </div>
@@ -347,34 +349,80 @@ function App() {
 
                     {dataForCharts.map((oneChart,i)=>
                         <div key={i} style={{width: "100%", height:"100%", display:"flex", paddingTop:"1%"}}>
-                            <div style={{width: "6%", height:"109%", marginTop:"-0.3%"}}>
-                                <ChartAxeY
-                                    key={i}
-                                    dataForCharts={oneChart}
-                                />
+
+                            <div style={{width: "7%", margin: "auto"}}>
+                                {oneChart.label}
                             </div>
 
-                            <div style={{width: "85%", height:"100%"}}>
+                            <div style={{width: "4%", height:"100%", textAlign: "right",  fontSize:" 72%"}}>
+                                {[...Array(chartGridLines)].map((x,index2)=>{
+                                    return (<div key={index2}>{(Math.min(...oneChart.data)+index2*((Math.max(...oneChart.data)-Math.min(...oneChart.data))/(chartGridLines-1))).toString().slice(0, 8)}</div>)
+                                })}
+
+
+                            </div>
+
+                            <div style={{width: "88%", height:"100%"}}>
                                 <Chart
                                     key={i}
                                     dataForCharts={oneChart}
                                 />
                             </div>
+
+
                         </div>
                     )}
 
 
-                    <div style={{width: "100%", display:"flex"}}>
-                        <div style={{width: "6%"}}>
+                    <div style={{width: "100%", height: "100%", display:"flex"}}>
+
+                        <div style={{width: "12%", height: "100%"}}>
+                            {dataForCharts[0]&&[...Array(1)].map((x,index)=>{
+
+                                let tmpDate = new Date(startData)
+
+                                if(index==0){
+                                    if (dataForCharts[0].offset == 0) {
+
+                                        return (<div key={index}>
+                                            {tmpDate.toLocaleString('en-GB', { timeZone: 'UTC' })}
+                                        </div>)
+                                    }else {
+                                        tmpDate.setSeconds(tmpDate.getSeconds() + dataForCharts[0].offset);
+
+                                        return (<div key={index}>
+                                            {tmpDate.toLocaleString('en-GB', { timeZone: 'UTC' })}
+                                        </div>)
+                                    }
+                                }
+
+                            })}
+
+
                         </div>
 
-                        <div style={{width: "85.55%"}}>
-                            <ChartAxeX
-                                dataForCharts={dataForCharts[0]}
-                                startData={startData}
-                            />
+
+                        <div style={{width: "89%", height:"100%"}}>
+
+
+                            <div style={{width: "100%", display:"flex", justifyContent:"space-between", fontSize:"72%", marginLeft:"4px"}}>
+                                {dataForCharts[0]&&[...Array(dataForCharts[0].data.length)].map((x,index)=>{
+
+                                    let tmpRate=dataForCharts[0].data.length/dataForCharts[0].limit
+
+                                    let tmpLable=Math.floor(((index%tmpRate)/tmpRate)*100)/100
+                                    tmpLable=tmpLable+(index-index%tmpRate)/tmpRate
+
+                                      return (<div key={index}>
+                                        {dataForCharts[0].offset+tmpLable}
+                                    </div>)
+                                })}
+                            </div>
                         </div>
                     </div>
+
+
+
 
 
 
